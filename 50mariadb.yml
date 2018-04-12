@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 30
       initContainers:
       - name: init-config
-        command: ['/bin/bash', '/etc/mysql/conf.d/init.sh']
+        command: ['/bin/bash', '/mnt/mysql/conf.d/init.sh']
         env:
         - name: K8S_NODE_NAME
           valueFrom:
@@ -44,6 +44,8 @@ spec:
           mountPath: /data
         - name: conf
           mountPath: /etc/mysql/conf.d
+        - name: config-map
+          mountPath: /mnt/mysql/conf.d
         - name: initdb
           mountPath: /docker-entrypoint-initdb.d
         image: mariadb:10.2.12@sha256:862de06a9b35f001e87bbefbb49008e84a59c4afd089c9a320947a9ae0e7cf1a
@@ -104,6 +106,8 @@ spec:
         - containerPort: 9104
       volumes:
       - name: conf
+        emptyDir: {}
+      - name: config-map
         configMap:
           name: conf-d
       - name: initdb
@@ -111,6 +115,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: mysql
+      annotations:
+        volume.beta.kubernetes.io/storage-class: mysql-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: mysql-data
