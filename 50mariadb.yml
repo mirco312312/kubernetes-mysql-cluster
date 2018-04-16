@@ -115,8 +115,6 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: mysql
-      annotations:
-        volume.beta.kubernetes.io/storage-class: mysql-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: mysql-data
